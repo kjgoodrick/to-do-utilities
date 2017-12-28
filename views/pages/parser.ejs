@@ -9,17 +9,17 @@
 <div class="container">
   <div class="row">
     <div class="col s12 m8 offset-m2">
-      
+
       <form class="card hoverable" id="tasks-form" method="post" action="/parser">
         <div class="card-content">
 
-          <span class="card-title red-text text-lighten-1"><strong>WunderList</strong> Parser</span>
+          <span class="card-title red-text text-lighten-1"><strong>To-Do</strong> Parser</span>
           <div class="divider"></div>
 
           <% if (locals.message) { %>
           <div class="<%= message.classes %> js-dismiss">
             <%- message.text %>
-          </div>  
+          </div>
           <% } %>
 
           <div class="input-field">

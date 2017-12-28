@@ -33,13 +33,13 @@ var sessionOptions = {
   name: 'server-session-cookie-id',
   secret: process.env.SECRET,
   saveUninitialized: true,
-  cookie: { httpOnly: true, 
-            secure: false, 
+  cookie: { httpOnly: true,
+            secure: false,
             maxAge: null,},
   resave: false,
   maxAge: (1000 * 60 * 60) * 2,
 }
-sessionOptions.store = (env == 'production') 
+sessionOptions.store = (env == 'production')
                        ? new RedisStore({client: client})
                        : new FileStore;
 app.use(session(sessionOptions))
@@ -66,31 +66,31 @@ app.use(function(req, res, next){
 });
 
 
-// Index: main view 
+// Index: main view
 app.get('/', function(req, res) {
   if (!req.session.token) {
-    res.render('pages/index', {button: {text: 'Login', href: '/auth'}});  
+    res.render('pages/index', {button: {text: 'Login', href: '/auth'}});
   } else {
     res.redirect('/parser');
   }
 });
 
 
-// Redirect user to authenticate 
+// Redirect user to authenticate
 app.get('/auth', function (req, res) {
-  var query = { 
+  var query = {
     client_id: process.env.CLIENT_ID,
     state: process.env.SECRET
   }
-  query.redirect_uri = (env == 'production') 
-                       ? 'http://wunderlist-parser.herokuapp.com/callback'
+  query.redirect_uri = (env == 'production')
+                       ? 'http://to-do-parser.herokuapp.com/callback'
                        : 'http://192.168.0.8:5000/callback';
   res.redirect('https://www.wunderlist.com/oauth/authorize?' +
        querystring.stringify(query))
 });
 
 
-// Logout 
+// Logout
 app.get('/logout', (req, res) => {
   req.session.destroy( ()=> {
     res.redirect('/')
@@ -98,7 +98,7 @@ app.get('/logout', (req, res) => {
 })
 
 
-// Wunderlist redirects back to your site
+// To-Do redirects back to your site
 app.get('/callback', function(req, res){
   if (req.query.state !== process.env.SECRET) {
     res.sendStatus(403);
@@ -112,7 +112,7 @@ app.get('/callback', function(req, res){
       };
       res.redirect('/parser');
     })
-    
+
   }
 })
 
@@ -133,7 +133,7 @@ app.get('/parser', function(req, res, next) {
 
 // proccess post request
 app.post('/parser', function(req, res){
-  
+
   var title = req.body.title;
 
   req.body.existingListId;
@@ -148,7 +148,7 @@ app.post('/parser', function(req, res){
   }
 
   // create list
-  var promise = req.body.existingListId 
+  var promise = req.body.existingListId
                 ? new Promise.resolve("")
                 : apiPromise.createListAsync(req.session.token, title);
   promise
@@ -178,11 +178,11 @@ app.post('/parser', function(req, res){
     })
   })
   .then(function() {
-      if (title) { 
-        req.session.success = `<b>${title}</b> list created successfully`; 
+      if (title) {
+        req.session.success = `<b>${title}</b> list created successfully`;
       }
-      else { 
-        req.session.success = `Tasks appended successfully`; 
+      else {
+        req.session.success = `Tasks appended successfully`;
       }
       res.redirect('/parser')
   }).catch(function(err){
